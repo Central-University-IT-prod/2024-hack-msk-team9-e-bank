@@ -1,0 +1,23 @@
+image: docker:latest
+
+stages:
+ - deploy
+
+deploy:
+ stage: deploy
+ image: ubuntu:latest
+ script:
+  - echo "Deploying application..."
+  - apt-get update -qq
+  - apt-get install -y -qq openssh-client
+  - mkdir -p ~/.ssh
+  - echo "$CI_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+  - ssh $SERVER_USER@$SERVER_IP "sudo rm -rf /back/*"
+  - ssh $SERVER_USER@$SERVER_IP "cd back && sudo rm -rf .[^.] .??*"
+  - scp -r . $SERVER_USER@$SERVER_IP:/back
+  # - ssh $SERVER_USER@$SERVER_IP "sudo docker compose -f /back/docker-compose.yml down"
+  - ssh $SERVER_USER@$SERVER_IP "sudo docker compose -f /back/docker-compose.yml up -d --build --remove-orphans"
+ only:
+  - master 

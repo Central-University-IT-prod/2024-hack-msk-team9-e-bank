@@ -1,0 +1,193 @@
+openapi: 3.0.0
+info:
+  title: Mailing Manager
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: Local development server
+paths:
+  /api/ping:
+    get:
+      summary: Ping API
+      description: For checking if the app is running
+      tags:
+        - Other
+      responses:
+        '200':
+          description: API is working
+
+  /worker/reg:
+    post:
+      summary: Register a worker
+      description: Workers can register through this endpoint
+      tags:
+        - Worker
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: integer
+              required:
+                - email
+                - password
+                - role
+      responses:
+        '200':
+          description: Worker registered successfully
+        '400':
+          description: Bad request
+
+  /worker/list:
+    get:
+      summary: List of workers
+      description: Retrieve a list of workers
+      tags:
+        - Worker
+      responses:
+        '200':
+          description: Successful response with a list of workers
+
+  /worker/auth:
+    post:
+      summary: Auth worker
+      description: Check if user is registered
+      tags:
+        - Worker
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Successful response if worker is in the database
+        '400':
+          description: No workers found
+
+  /user/reg:
+    post:
+      summary: Register a user
+      description: Users can register through this endpoint
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              required:
+                - email
+      responses:
+        '200':
+          description: User registered successfully
+        '400':
+          description: Bad request
+
+  /user/list:
+    get:
+      summary: List of users
+      description: Retrieve a list of users for email advertising
+      tags:
+        - User
+      responses:
+        '200':
+          description: Successful response with a list of users
+
+  /mail/{role}:
+    post:
+      summary: Get mails for role
+      description: Return list of mails for role using email
+      tags:
+        - Mail
+      parameters:
+        - name: role
+          in: path
+          required: true
+          description: The role for which to get mails
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              required:
+                - email
+      responses:
+        '200':
+          description: Success
+
+  /mail/list:
+    get:
+      summary: Get all mails
+      description: Return list of mails
+      tags:
+        - Mail
+      responses:
+        '200':
+          description: Success
+          
+  /mail/add:
+    post:
+      summary: Add new mail
+      description: Add new mail to db
+      tags:
+        - Mail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                theme:
+                  type: string
+                target:
+                  type: string
+                community:
+                  type: string
+                template:
+                  type: string
+                status:
+                  type: string
+                analyst:
+                  type: integer
+                product:
+                  type: integer
+                editor:
+                  type: integer
+                main_editor:
+                  type: integer
+                marketolog:
+                  type: integer
+              required:
+                - theme
+                - target
+      responses:
+        '200':
+          description: Success
